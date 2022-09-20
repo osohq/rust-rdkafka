@@ -22,7 +22,7 @@ struct CustomContext;
 impl ClientContext for CustomContext {}
 
 impl ConsumerContext for CustomContext {
-    fn pre_rebalance(&self, rebalance: &Rebalance) {
+    fn pre_rebalance(&self, rebalance: &mut Rebalance) {
         info!("Pre rebalance {:?}", rebalance);
     }
 

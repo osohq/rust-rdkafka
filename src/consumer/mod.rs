@@ -55,7 +55,7 @@ pub trait ConsumerContext: ClientContext {
         err: RDKafkaRespErr,
         tpl: &mut TopicPartitionList,
     ) {
-        let rebalance = match err {
+        let mut rebalance = match err {
             RDKafkaRespErr::RD_KAFKA_RESP_ERR__ASSIGN_PARTITIONS => Rebalance::Assign(tpl),
             RDKafkaRespErr::RD_KAFKA_RESP_ERR__REVOKE_PARTITIONS => Rebalance::Revoke(tpl),
             _ => {
@@ -66,7 +66,7 @@ pub trait ConsumerContext: ClientContext {
         };
 
         trace!("Running pre-rebalance with {:?}", rebalance);
-        self.pre_rebalance(&rebalance);
+        self.pre_rebalance(&mut rebalance);
 
         trace!("Running rebalance with {:?}", rebalance);
         // Execute rebalance
@@ -99,7 +99,7 @@ pub trait ConsumerContext: ClientContext {
     /// Pre-rebalance callback. This method will run before the rebalance and
     /// should terminate its execution quickly.
     #[allow(unused_variables)]
-    fn pre_rebalance<'a>(&self, rebalance: &Rebalance<'a>) {}
+    fn pre_rebalance<'a>(&self, rebalance: &mut Rebalance<'a>) {}
 
     /// Post-rebalance callback. This method will run after the rebalance and
     /// should terminate its execution quickly.
